@@ -20,7 +20,7 @@ public class Main {
                     HR_Main.system();
                     break;
                 case "2":
-                    PresentationCli.transitSystem();
+                    PresentationCli.transitSystemCli();
                     break;
                 case "3":
                     return;

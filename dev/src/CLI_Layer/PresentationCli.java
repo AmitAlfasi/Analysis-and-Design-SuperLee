@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class PresentationCli {
-    public static void transitSystem() throws SQLException, ClassNotFoundException {
+    public static void transitSystemCli() throws SQLException, ClassNotFoundException {
         PresentationCli ps = new PresentationCli();
         Scanner scanner = new Scanner(System.in);
 

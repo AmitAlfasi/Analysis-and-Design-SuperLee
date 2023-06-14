@@ -1,9 +1,15 @@
 package GUI_Layer;
 
+import CLI_Layer.OrderDocumentCli;
+import CLI_Layer.TransitCli;
+import CLI_Layer.TruckCli;
+import ControllerLayer.ControllerGen;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class PresentationGui extends JFrame {
     public PresentationGui() {
@@ -38,7 +44,12 @@ public class PresentationGui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                TruckGui truckGui = new TruckGui();
+                TruckGui truckGui = null;
+                try {
+                    truckGui = new TruckGui(ControllerGen.getTruckControllerGui());
+                } catch (SQLException | ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
                 truckGui.setVisible(true);
             }
         });
@@ -81,8 +92,8 @@ public class PresentationGui extends JFrame {
 
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
                 PresentationGui presentationGui = new PresentationGui();
             }
         });

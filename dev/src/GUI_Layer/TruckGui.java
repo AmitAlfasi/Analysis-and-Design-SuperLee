@@ -8,7 +8,13 @@ import java.awt.event.ActionListener;
 
 
 class TruckGui extends JFrame {
-    public TruckGui() {
+    private TruckController truckControllerGui;
+
+
+    public TruckGui(TruckController truckControllerGui) {
+
+        this.truckControllerGui = truckControllerGui;
+
         setTitle("Truck Manager");
         setSize(400, 300);
         setLayout(new GridLayout(4, 1));
@@ -35,7 +41,7 @@ class TruckGui extends JFrame {
         showAllTrucksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Code to handle show all trucks action
+                //truckControllerGui.showAllTrucks();
             }
         });
 
@@ -57,4 +63,23 @@ class TruckGui extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
+
+//    public void actionPerformed(ActionEvent e) {
+//        String command = e.getActionCommand();
+//
+//        switch (command) {
+//            case "createTruck":
+//                displayTruckCreationForm();
+//                break;
+//            case "removeTruck":
+//                displayTruckRemovalForm();
+//                break;
+//            case "searchTruck":
+//                displayTruckSearchForm();
+//                break;
+//            case "showAllTrucks":
+//                displayAllTrucks();
+//                break;
+//        }
+//    }
 }
