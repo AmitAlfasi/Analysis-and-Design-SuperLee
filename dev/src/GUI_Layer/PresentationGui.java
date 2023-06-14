@@ -20,6 +20,7 @@ public class PresentationGui extends JFrame {
         JButton manageDocumentsButton = new JButton("Manage documents");
         JButton manageOrdersButton = new JButton("Manage orders");
         JButton escapeMenuButton = new JButton("Exit");
+        escapeMenuButton.setForeground(Color.red);
 
         createTransitButton.addActionListener(new ActionListener() {
             @Override
