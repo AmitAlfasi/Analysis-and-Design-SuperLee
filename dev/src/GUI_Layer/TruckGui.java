@@ -10,12 +10,11 @@ import java.awt.event.ActionListener;
 
 
 class TruckGui extends JFrame {
-    private TruckController truckControllerGUI;
+    private TruckController truckControllerGui;
 
 
-    public TruckGui(TruckController truckControllerGUI) {
-
-        this.truckControllerGUI = truckControllerGUI;
+    public TruckGui(TruckController truckControllerGui) {
+        this.truckControllerGui = truckControllerGui;
 
         setTitle("Truck Manager");
         setSize(400, 300);
@@ -87,7 +86,7 @@ class TruckGui extends JFrame {
                         qualifications[0] = selectedLicense.ordinal();
                         qualifications[1] = hasCooler ? 1 : 0;
 
-                        truckControllerGUI.createTruck(plateNumber, selectedModel.ordinal(), qualifications, truckWeight, maxWeight);
+                        truckControllerGui.createTruck(plateNumber, selectedModel.ordinal(), qualifications, truckWeight, maxWeight);
                         JOptionPane.showMessageDialog(createTruckFrame, "Truck added successfully!");
                         createTruckFrame.dispose();
                     }
@@ -132,7 +131,7 @@ class TruckGui extends JFrame {
                 if (plateNumberInput != null && !plateNumberInput.isEmpty()) {
                     try {
                         int plateNumber = Integer.parseInt(plateNumberInput);
-                        boolean removed = truckControllerGUI.removeTruckByPlateNumber(plateNumberInput);
+                        boolean removed = truckControllerGui.removeTruckByPlateNumber(plateNumberInput);
                         if (removed) {
                             JOptionPane.showMessageDialog(null, "Truck removed successfully!", "Remove Truck", JOptionPane.INFORMATION_MESSAGE);
                         } else {
@@ -149,7 +148,7 @@ class TruckGui extends JFrame {
         showAllTrucksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                truckControllerGUI.showAllTrucks();
+                truckControllerGui.showAllTrucks();
             }
         });
 

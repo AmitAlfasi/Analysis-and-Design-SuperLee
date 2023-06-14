@@ -25,7 +25,14 @@ public class PresentationGui extends JFrame {
         createTransitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Code to handle create new transit action
+                TransitGui transitGui = null;
+                try {
+                    transitGui = new TransitGui(ControllerGen.getTransitControllerGUI());
+                } catch (SQLException | ClassNotFoundException ex)
+                {
+                    ex.printStackTrace();
+                }
+                transitGui.createNewTransit();
             }
         });
 
@@ -33,7 +40,13 @@ public class PresentationGui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                TransitGui transitGui = new TransitGui();
+                TransitGui transitGui = null;
+                try {
+                    transitGui = new TransitGui(ControllerGen.getTransitControllerGUI());
+                } catch (SQLException | ClassNotFoundException ex)
+                {
+                    ex.printStackTrace();
+                }
                 transitGui.setVisible(true);
             }
         });
