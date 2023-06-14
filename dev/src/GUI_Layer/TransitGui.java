@@ -19,6 +19,7 @@ class TransitGui extends JFrame {
         JButton startTransitButton = new JButton("Start transit");
         JButton printStoreAvailabilityButton = new JButton("Print store availability");
         JButton backButton = new JButton("Back to Delivery System Menu");
+        backButton.setForeground(Color.red);
 
         printTransitDetailsButton.addActionListener(new ActionListener() {
             @Override

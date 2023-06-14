@@ -16,7 +16,7 @@ class OrderDocumentGui extends JFrame {
         JButton showPendingOrdersButton = new JButton("Show pending orders");
         JButton editOrderButton = new JButton("Edit order");
         JButton backButton = new JButton("Back to Delivery System Menu");
-
+        backButton.setForeground(Color.red);
         createOrderButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -70,6 +70,7 @@ class EditOrderGui extends JFrame {
         JButton changeProductAmountButton = new JButton("Change the amount of a product");
         JButton removeProductsButton = new JButton("Remove products");
         JButton backButton = new JButton("Back to Manage Orders");
+        backButton.setForeground(Color.red);
 
         addProductsButton.addActionListener(new ActionListener() {
             @Override

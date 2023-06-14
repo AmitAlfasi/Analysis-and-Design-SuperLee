@@ -118,6 +118,8 @@ public class PresentationGui extends JFrame {
         JButton showCompletedOrdersButton = new JButton("Show completed orders");
         JButton showTransitRecordsButton = new JButton("Show Transit records");
         JButton backButton = new JButton("Back to Delivery System Menu");
+        backButton.setForeground(Color.red);
+
 
         // Add action listeners to the showPendingOrdersButton
         showPendingOrdersButton.addActionListener(new ActionListener() {

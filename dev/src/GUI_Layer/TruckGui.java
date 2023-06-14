@@ -25,6 +25,7 @@ class TruckGui extends JFrame {
         JButton removeTruckButton = new JButton("Remove truck");
         JButton showAllTrucksButton = new JButton("Show all trucks");
         JButton backButton = new JButton("Back to Delivery System Menu");
+        backButton.setForeground(Color.red);
 
         addTruckButton.addActionListener(new ActionListener() {
             @Override
