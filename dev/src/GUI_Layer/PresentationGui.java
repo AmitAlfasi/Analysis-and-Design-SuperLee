@@ -1,8 +1,5 @@
 package GUI_Layer;
 
-import CLI_Layer.OrderDocumentCli;
-import CLI_Layer.TransitCli;
-import CLI_Layer.TruckCli;
 import ControllerLayer.ControllerGen;
 
 import javax.swing.*;
@@ -46,7 +43,7 @@ public class PresentationGui extends JFrame {
                 dispose();
                 TruckGui truckGui = null;
                 try {
-                    truckGui = new TruckGui(ControllerGen.getTruckControllerGui());
+                    truckGui = new TruckGui(ControllerGen.getTruckControllerGUI());
                 } catch (SQLException | ClassNotFoundException ex) {
                     ex.printStackTrace();
                 }

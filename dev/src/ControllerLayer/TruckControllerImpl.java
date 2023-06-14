@@ -7,7 +7,7 @@ import DomainLayer.TruckModel;
 import java.util.Set;
 
 public class TruckControllerImpl implements TruckController {
-    private final TruckDAO truckDAO;
+    protected final TruckDAO truckDAO;
     public TruckControllerImpl(TruckDAO truckDAO){
         this.truckDAO = truckDAO;
     }

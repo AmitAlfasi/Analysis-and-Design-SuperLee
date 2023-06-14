@@ -74,7 +74,7 @@ public class ControllerGen {
     }
 
     // ----- GUI - Controllers -----
-    public static TruckController getTruckControllerGui() throws SQLException, ClassNotFoundException {
+    public static TruckController getTruckControllerGUI() throws SQLException, ClassNotFoundException {
         if (truckControllerGui == null)
         {
             truckControllerGui = new TruckControllerImplGui(DAO_Generator.getTruckDAO());

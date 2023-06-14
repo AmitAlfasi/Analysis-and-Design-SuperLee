@@ -1,7 +1,6 @@
 package GUI_Layer;
 
 import ControllerLayer.TruckController;
-import DomainLayer.Truck;
 import DomainLayer.TruckModel;
 import BussinesLogic.License;
 import javax.swing.*;
@@ -11,12 +10,12 @@ import java.awt.event.ActionListener;
 
 
 class TruckGui extends JFrame {
-    private TruckController truckControllerGui;
+    private TruckController truckControllerGUI;
 
 
-    public TruckGui(TruckController truckControllerGui) {
+    public TruckGui(TruckController truckControllerGUI) {
 
-        this.truckControllerGui = truckControllerGui;
+        this.truckControllerGUI = truckControllerGUI;
 
         setTitle("Truck Manager");
         setSize(400, 300);
@@ -37,14 +36,22 @@ class TruckGui extends JFrame {
         removeTruckButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Code to handle remove truck action
-            }
+                String plateNumber = JOptionPane.showInputDialog(null, "Enter the plate number of the truck to remove:", "Remove Truck", JOptionPane.PLAIN_MESSAGE);
+                if (plateNumber != null && !plateNumber.isEmpty()) {
+                    boolean removed = truckControllerGUI.removeTruckByPlateNumber(plateNumber);
+                    if (removed) {
+                        JOptionPane.showMessageDialog(null, "Truck removed successfully!", "Remove Truck", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Truck with plate number " + plateNumber + " does not exist!", "Remove Truck", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+         }
         });
 
         showAllTrucksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                truckControllerGui.showAllTrucks();
+                truckControllerGUI.showAllTrucks();
             }
         });
 
@@ -109,7 +116,7 @@ class TruckGui extends JFrame {
 //                iQualifications[0] |= selectedLicense.ordinal() << 1;
 
 //                int[] iQArr = {iQualifications[0]};
-                truckControllerGui.createTruck(plateNumber[0], iModel[0], iQualifications, truckWeight[0], maxWeight[0]);
+                truckControllerGUI.createTruck(plateNumber[0], iModel[0], iQualifications, truckWeight[0], maxWeight[0]);
 
                 JOptionPane.showMessageDialog(createTruckFrame, "Truck added successfully!");
                 createTruckFrame.dispose();
