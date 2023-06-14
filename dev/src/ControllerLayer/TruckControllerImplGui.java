@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Set;
 
 public class TruckControllerImplGui implements TruckController, ActionListener {
     private TruckDAO truckDAO;
@@ -89,8 +90,28 @@ public class TruckControllerImplGui implements TruckController, ActionListener {
 
     @Override
     public void showAllTrucks() {
-        // TODO: Implement showAllTrucks method
+        Set<Truck> trucks = truckDAO.getTrucksSet();
+
+        if (trucks.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No trucks found.", "Truck Manager", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            StringBuilder message = new StringBuilder();
+            message.append("List of Trucks:\n\n");
+            for (Truck truck : trucks) {
+                message.append("Truck ID: ").append(truck.getPlateNumber()).append("\n");
+                message.append("TruckWeight: ").append(truck.getTruckWeight()).append("\n");
+                message.append("Model: ").append(truck.getModel()).append("\n");
+                message.append("Capacity: ").append(truck.getMaxCarryWeight()).append("\n\n");
+            }
+
+            JTextArea textArea = new JTextArea(message.toString());
+            textArea.setEditable(false);
+            JScrollPane scrollPane = new JScrollPane(textArea);
+
+            JOptionPane.showMessageDialog(null, scrollPane, "Truck Manager", JOptionPane.PLAIN_MESSAGE);
+        }
     }
+
 
     @Override
     public boolean showTruckByPlate(String tPlateNumber) {

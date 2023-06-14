@@ -41,6 +41,7 @@ class TruckGui extends JFrame {
         showAllTrucksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                truckControllerGui.showAllTrucks();
                 //truckControllerGui.showAllTrucks();
             }
         });
