@@ -7,7 +7,6 @@ public interface TruckController {
     boolean removeTruckByPlateNumber(String tPlateNumber);
     Truck findTruckByPlate(String tPlateNumber);
     void showAllTrucks();
-    boolean showTruckByPlate(String tPlateNumber);
     boolean transferLoadV2(Truck smallerTruck, Truck biggerTruck);
 
 }

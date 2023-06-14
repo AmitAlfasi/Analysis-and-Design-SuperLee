@@ -96,7 +96,7 @@ public class TruckControllerImplGui implements TruckController, ActionListener {
             JOptionPane.showMessageDialog(null, "No trucks found.", "Truck Manager", JOptionPane.INFORMATION_MESSAGE);
         } else {
             StringBuilder message = new StringBuilder();
-            message.append("List of Trucks:\n\n");
+            message.append("All Trucks:\n\n");
             for (Truck truck : trucks) {
                 message.append("Truck ID: ").append(truck.getPlateNumber()).append("\n");
                 message.append("TruckWeight: ").append(truck.getTruckWeight()).append("\n");
@@ -110,13 +110,6 @@ public class TruckControllerImplGui implements TruckController, ActionListener {
 
             JOptionPane.showMessageDialog(null, scrollPane, "Truck Manager", JOptionPane.PLAIN_MESSAGE);
         }
-    }
-
-
-    @Override
-    public boolean showTruckByPlate(String tPlateNumber) {
-        // TODO: Implement showTruckByPlate method
-        return false;
     }
 
     @Override

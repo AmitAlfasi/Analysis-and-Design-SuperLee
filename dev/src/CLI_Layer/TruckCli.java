@@ -122,9 +122,4 @@ public class TruckCli {
         }
         return intArr;
     }
-    void printTruckByPlate(String tPLateNumber){
-        boolean flag = truckController.showTruckByPlate(tPLateNumber);
-        if (!flag)
-            System.out.printf("Truck's plate number: %s not found!%n", tPLateNumber);
-    }
 }

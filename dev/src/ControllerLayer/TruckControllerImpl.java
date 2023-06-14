@@ -44,13 +44,6 @@ public class TruckControllerImpl implements TruckController {
     }
 
     @Override
-    public boolean showTruckByPlate(String tPlateNumber) {
-        Truck truckToShow = findTruckByPlate(tPlateNumber);
-        if (truckToShow == null)return false;
-        truckToShow.printTruck();
-        return true;
-        }
-    @Override
     public boolean transferLoadV2(Truck smallerTruck, Truck biggerTruck){
         if (biggerTruck.getMaxCarryWeight() >= smallerTruck.getCurrentWeight())
         {
