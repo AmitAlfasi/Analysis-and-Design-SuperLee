@@ -3,16 +3,20 @@ package GUI_Layer;
 
 import BussinesLogic.TransitCoordinator;
 import ControllerLayer.*;
+import DomainLayer.OrderDocument;
 import DomainLayer.Product;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 class OrderDocumentGui extends JFrame {
@@ -51,7 +55,6 @@ class OrderDocumentGui extends JFrame {
                 JTextField branchStoreIdField = new JTextField(10);
                 JComboBox<String>[] productComboBoxes = new JComboBox[3];
                 JTextField[] amountFields = new JTextField[3];
-                final int[] lineCount = {1};
 
                 gbc.gridx = 0;
                 gbc.gridy = 0;
@@ -96,47 +99,86 @@ class OrderDocumentGui extends JFrame {
                 int result = JOptionPane.showConfirmDialog(null, inputPanel, "Create Order", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
                 if (result == JOptionPane.OK_OPTION) {
+                    int supplierId;
                     try {
-                        int supplierId = Integer.parseInt(supplierIdField.getText());
+                        supplierId = Integer.parseInt(supplierIdField.getText());
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "Invalid input! Please enter a valid integer for Supplier ID.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
+                    int branchStoreId;
                     try {
-                        int branchStoreId = Integer.parseInt(branchStoreIdField.getText());
+                        branchStoreId = Integer.parseInt(branchStoreIdField.getText());
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "Invalid input! Please enter a valid integer for Branch Store ID.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
-                    String[] selectedProducts = new String[lineCount[0]];
-                    double[] amounts = new double[lineCount[0]];
+                    int lineCount = 0;
+                    for (int i = 0; i < 3; i++) {
+                        String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
+                        if (!selectedProduct.equals("null")) {
+                            lineCount++;
+                        }
+                    }
 
-                    for (int i = 0; i < lineCount[0]; i++) {
-                        try {
-                            String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
-                            double amount = Double.parseDouble(amountFields[i].getText());
+                    String[] selectedProducts = new String[lineCount];
+                    double[] amounts = new double[lineCount];
 
-                            if (selectedProduct.equals("null")) {
-                                JOptionPane.showMessageDialog(null, "Invalid input! Please select a valid product for Product " + (i + 1) + ".", "Error", JOptionPane.ERROR_MESSAGE);
+                    int lineIndex = 0;
+
+                    for (int i = 0; i < 3; i++) {
+                        String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
+                        double amount;
+
+                        if (!selectedProduct.equals("null")) {
+                            try {
+                                amount = Double.parseDouble(amountFields[i].getText());
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(null, "Invalid input! Please enter valid doubles for Amount.", "Error", JOptionPane.ERROR_MESSAGE);
                                 return;
                             }
 
-                            selectedProducts[i] = selectedProduct;
-                            amounts[i] = amount;
-                        } catch (NumberFormatException ex) {
-                            JOptionPane.showMessageDialog(null, "Invalid input! Please enter valid doubles for Amount.", "Error", JOptionPane.ERROR_MESSAGE);
-                            return;
+                            selectedProducts[lineIndex] = selectedProduct;
+                            amounts[lineIndex] = amount;
+
+                            lineIndex++;
                         }
                     }
-                    HashMap<Product, Double> productSet = new HashMap<>();
-                    for (int i = 0; i < lineCount[0]; i++) {
-                        //productSet.put(new Product(selectedProducts[i],), amounts[i]);
+
+                    OrderDocument orderDoc = orderDocumentControllerImplGui.createOrderDocDBD(supplierId, branchStoreId);
+                    if (orderDoc == null) {
+                        JOptionPane.showMessageDialog(null, "Store or Supplier ID has not been found. Failed to create the order document.", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        int weight = 0;
+                        for (int i = 0; i < lineCount; i++) {
+                            Product newProduct = productController.findProductByName(selectedProducts[i]);
+                            int productId = newProduct.getProductId();
+                            double productAmount = amounts[i];
+                            weight += amounts[i];
+                            orderDocumentControllerImplGui.addProductToOrderDocDB(orderDoc.getOrderDocumentId(), productId, productAmount);
+                        }
+                        orderDocumentControllerImplGui.updateWeightDB(orderDoc, weight);
+                        StringBuilder message = new StringBuilder();
+                        message.append("Order Document created successfully!\n");
+                        message.append("Order Document ID: ").append(orderDoc.getOrderDocumentId()).append("\n");
+                        message.append("Branch Store ID: ").append(branchStoreId).append("\n");
+                        message.append("Supplier ID: ").append(supplierId).append("\n");
+
+                        for (int i = 0; i < lineCount; i++) {
+                            String product = selectedProducts[i];
+                            double amount = amounts[i];
+                            message.append("Product ").append(i + 1).append(": ").append(product).append(", Amount: ").append(amount).append("\n");
+                        }
+
+                        JOptionPane.showMessageDialog(null, message.toString(), "Order Document Created", JOptionPane.INFORMATION_MESSAGE);
+                        // Perform any additional actions if needed
                     }
                 }
             }
         });
+
 
 
 
@@ -194,9 +236,107 @@ class EditOrderGui extends JFrame {
         addProductsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Code to handle add products action
+                JPanel inputPanel = new JPanel();
+                inputPanel.setLayout(new GridBagLayout());
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.insets = new Insets(20, 15, 10, 15);
+
+                JTextField orderDocumentIdField = new JTextField(10);
+                JComboBox<String>[] productComboBoxes = new JComboBox[3];
+                JTextField[] amountFields = new JTextField[3];
+
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                inputPanel.add(new JLabel("Order Document ID:"), gbc);
+
+                gbc.gridx = 1;
+                gbc.gridy = 0;
+                inputPanel.add(orderDocumentIdField, gbc);
+
+                String[] productOptions = { "Apple", "Orange", "Banana" };
+
+                for (int i = 0; i < 3; i++) {
+                    gbc.gridx = 0;
+                    gbc.gridy = i * 3 + 1;
+                    productComboBoxes[i] = new JComboBox<>(productOptions);
+                    inputPanel.add(new JLabel("Product " + (i + 1) + ":"), gbc);
+
+                    gbc.gridx = 1;
+                    gbc.gridy = i * 3 + 1;
+                    inputPanel.add(productComboBoxes[i], gbc);
+
+                    gbc.gridx = 0;
+                    gbc.gridy = i * 3 + 2;
+                    inputPanel.add(new JLabel("Amount:"), gbc);
+
+                    gbc.gridx = 1;
+                    gbc.gridy = i * 3 + 2;
+                    amountFields[i] = new JTextField(10);
+                    inputPanel.add(amountFields[i], gbc);
+                }
+
+                inputPanel.setPreferredSize(new Dimension(300, 250));
+
+                JScrollPane scrollPane = new JScrollPane(inputPanel); // Wrap inputPanel in a JScrollPane
+
+                // Add mouse wheel listener to the scrollPane
+                scrollPane.addMouseWheelListener(new MouseWheelListener() {
+                    @Override
+                    public void mouseWheelMoved(MouseWheelEvent e) {
+                        JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+                        verticalScrollBar.setValue(verticalScrollBar.getValue() - e.getWheelRotation() * verticalScrollBar.getUnitIncrement());
+                    }
+                });
+
+                int result = JOptionPane.showConfirmDialog(null, scrollPane, "Add Products", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    int orderDocumentId;
+                    try {
+                        orderDocumentId = Integer.parseInt(orderDocumentIdField.getText());
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid input! Please enter a valid integer for Order Document ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    java.util.List<String> selectedProducts = new ArrayList<>();
+                    List<Double> amounts = new ArrayList<>();
+
+                    for (int i = 0; i < 3; i++) {
+                        String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
+                        double amount;
+
+                        if (!selectedProduct.equals("null")) {
+                            try {
+                                amount = Double.parseDouble(amountFields[i].getText());
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(null, "Invalid input! Please enter valid doubles for Amount.", "Error", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+
+                            selectedProducts.add(selectedProduct);
+                            amounts.add(amount);
+                        }
+                    }
+
+                    StringBuilder message = new StringBuilder();
+                    message.append("Order Document ID: ").append(orderDocumentId).append("\n");
+
+                    for (int i = 0; i < selectedProducts.size(); i++) {
+                        String product = selectedProducts.get(i);
+                        double amount = amounts.get(i);
+                        message.append("Product ").append(i + 1).append(": ").append(product).append(", Amount: ").append(amount).append("\n");
+                    }
+
+                    JOptionPane.showMessageDialog(null, message.toString(), "Products Added", JOptionPane.INFORMATION_MESSAGE);
+                    // Perform any additional actions if needed
+                }
             }
         });
+
+
+
 
         changeProductAmountButton.addActionListener(new ActionListener() {
             @Override

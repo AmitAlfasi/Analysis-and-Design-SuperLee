@@ -25,7 +25,6 @@ public class OrderDocumentControllerImpl implements OrderDocumentController {
     @Override
     public OrderDocument createOrderDocDBD(int sourceId, int destinationId) {
         Supplier supplier = supplierController.findSupplierById(sourceId) ;
-        //TODO find storeById with BranchStore;
         BranchStore branchStore = transitCoordinator.findStoreById(destinationId) ;
         if (branchStore == null || supplier == null) return null;
         OrderDocument orderDoc = new OrderDocument(supplier, branchStore);
