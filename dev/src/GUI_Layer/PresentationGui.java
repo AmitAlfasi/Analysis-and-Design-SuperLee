@@ -75,8 +75,17 @@ public class PresentationGui extends JFrame {
         manageOrdersButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 dispose();
-                OrderDocumentGui orderDocumentGui = new OrderDocumentGui();
+                OrderDocumentGui orderDocumentGui = null;
+                try {
+                    orderDocumentGui = new OrderDocumentGui(ControllerGen.getOrderDocumentControllerGui(),
+                            ControllerGen.getProductController(),
+                            ControllerGen.getSupplierController(),
+                            ControllerGen.getTransitCoordinator());
+                } catch (SQLException | ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
                 orderDocumentGui.setVisible(true);
             }
         });

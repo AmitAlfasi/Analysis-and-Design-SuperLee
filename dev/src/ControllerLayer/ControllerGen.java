@@ -56,6 +56,8 @@ public class ControllerGen {
         return orderDocumentController;
     }
 
+
+
     public static TransitRecordController getTransitRecordController() throws SQLException, ClassNotFoundException {
         if (transitRecordController == null)
         {
@@ -89,5 +91,14 @@ public class ControllerGen {
                     getTransitCoordinator(), getOrderDocumentController(), getTransitRecordController());
         }
         return transitControllerGui;
+    }
+
+    public static OrderDocumentController getOrderDocumentControllerGui() throws SQLException, ClassNotFoundException {
+        if (orderDocumentController == null)
+        {
+            orderDocumentController = new OrderDocumentControllerImplGui(DAO_Generator.getOrderDocumentDAO(),
+                    getSupplierController(),getTransitCoordinator(),getProductController());
+        }
+        return orderDocumentController;
     }
 }

@@ -8,10 +8,10 @@ import DomainLayer.*;
 import java.util.*;
 
 public class OrderDocumentControllerImpl implements OrderDocumentController {
-    private final OrderDocumentDAO orderDocumentDAO;
-    private final SupplierController supplierController;
-    private final TransitCoordinator transitCoordinator;
-    private final ProductController productController;
+    protected final OrderDocumentDAO orderDocumentDAO;
+    protected final SupplierController supplierController;
+    protected final TransitCoordinator transitCoordinator;
+    protected final ProductController productController;
 
 
     public OrderDocumentControllerImpl(OrderDocumentDAO orderDocDAO,
