@@ -13,6 +13,7 @@ public class ControllerGen {
     private static TransitCoordinator transitCoordinator;
     private static TruckController truckControllerGui;
     private static TransitController transitControllerGui;
+    private static OrderDocumentController orderDocumentControllerGui;
 
 
     public static TransitCoordinator getTransitCoordinator() throws SQLException, ClassNotFoundException {
@@ -94,11 +95,11 @@ public class ControllerGen {
     }
 
     public static OrderDocumentController getOrderDocumentControllerGui() throws SQLException, ClassNotFoundException {
-        if (orderDocumentController == null)
+        if (orderDocumentControllerGui == null)
         {
-            orderDocumentController = new OrderDocumentControllerImplGui(DAO_Generator.getOrderDocumentDAO(),
+            orderDocumentControllerGui = new OrderDocumentControllerImplGui(DAO_Generator.getOrderDocumentDAO(),
                     getSupplierController(),getTransitCoordinator(),getProductController());
         }
-        return orderDocumentController;
+        return orderDocumentControllerGui;
     }
 }
