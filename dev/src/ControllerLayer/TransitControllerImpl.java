@@ -57,18 +57,15 @@ public class TransitControllerImpl implements TransitController {
     }
     @Override
     public Transit findTransitByID(int transitId) {
-        return this.transitDAO.findTransitByID(transitId);
+        return transitDAO.findTransitByID(transitId);
     }
 //    @Override
 //    public Set<Transit> getTransitsSet() {
 //        return this.transitDAO.getTransitsSet();
 //    }
     @Override
-    public boolean showTransitByID(int transitId) {
-        Transit transitToShow = findTransitByID(transitId);
-        if(transitToShow==null) return false;
-        transitToShow.printTransit();
-        return true;
+    public Transit showTransitByID(int transitId) {
+        return findTransitByID(transitId);
     }
     @Override
     public int replaceTransitTruck(int transitId, String newTruckPlate) {
@@ -117,10 +114,7 @@ public class TransitControllerImpl implements TransitController {
 
         return 1;
     }
-//    public Date createDateObj(String dateString) throws ParseException {
-//        //SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-//        return new Date(dateString);
-//    }
+
     @Override
     public boolean isDriverAllowToDriveTruck(Truck truck, Driver driver){
         Set <BussinesLogic.License> truckLSet = truck.getTruckLicenses();

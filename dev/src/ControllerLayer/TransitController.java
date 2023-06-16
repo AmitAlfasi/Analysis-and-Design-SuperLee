@@ -9,7 +9,7 @@ import ExceptionsPackage.UiException;
 public interface TransitController {
     Transit createTransit(String dateString, String truckPlateNumber, String driverId) throws UiException;
     Transit findTransitByID(int transitId);
-    boolean showTransitByID(int transitId);
+    Transit showTransitByID(int transitId);
     int replaceTransitTruck(int transitId, String truckPlate);
     int replaceTransitDriver(int transitId, String driverId, String truckPlate, String callingFlag);
     void moveTransitToFinishedDB(Transit transit);

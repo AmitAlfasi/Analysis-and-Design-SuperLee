@@ -14,13 +14,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 class OrderDocumentGui extends JFrame {
-
     private final OrderDocumentController orderDocumentControllerImplGui;
     private final ProductController productController;
     private final SupplierController supplierController;

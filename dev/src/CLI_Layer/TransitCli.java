@@ -23,7 +23,8 @@ public class TransitCli {
     private final TransitCoordinator transitCoordinator;
     private final TransitRecordController transitRecordController;
     public TransitCli(TransitController transitController, TruckController truckController,
-                      TransitCoordinator transitCoordinator, OrderDocumentController orderDocumentController, TransitRecordController transitRecordController) {
+                      TransitCoordinator transitCoordinator, OrderDocumentController orderDocumentController,
+                      TransitRecordController transitRecordController) {
         this.transitController = transitController;
         this.truckController = truckController;
         this.transitCoordinator = transitCoordinator;
@@ -89,9 +90,13 @@ public class TransitCli {
         }
     }
     public void printTransitById(int transitId){
-        boolean flag = transitController.showTransitByID(transitId);
-        if(!flag)
+        Transit transitToShow = transitController.showTransitByID(transitId);
+        if(transitToShow == null)
+        {
             System.out.printf("Transit's id: %d not found!%n", transitId);
+            return;
+        }
+        transitToShow.printTransit();
     }
     public int getTransitIdHandler(Scanner scanner)
     {

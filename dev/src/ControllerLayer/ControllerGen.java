@@ -11,6 +11,7 @@ public class ControllerGen {
     private static TransitController transitController;
     private static TransitRecordController transitRecordController;
     private static TransitCoordinator transitCoordinator;
+    // --- Gui section ---
     private static TruckController truckControllerGui;
     private static TransitController transitControllerGui;
     private static OrderDocumentController orderDocumentControllerGui;

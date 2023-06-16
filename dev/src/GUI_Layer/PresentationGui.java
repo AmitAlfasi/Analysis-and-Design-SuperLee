@@ -27,7 +27,8 @@ public class PresentationGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 TransitGui transitGui = null;
                 try {
-                    transitGui = new TransitGui(ControllerGen.getTransitControllerGUI());
+                    transitGui = new TransitGui(ControllerGen.getTransitControllerGUI(), ControllerGen.getTruckControllerGUI(),
+                            ControllerGen.getTransitCoordinator(), ControllerGen.getOrderDocumentControllerGui(), ControllerGen.getTransitRecordController());
                 } catch (SQLException | ClassNotFoundException ex)
                 {
                     ex.printStackTrace();
@@ -42,7 +43,8 @@ public class PresentationGui extends JFrame {
                 dispose();
                 TransitGui transitGui = null;
                 try {
-                    transitGui = new TransitGui(ControllerGen.getTransitControllerGUI());
+                    transitGui = new TransitGui(ControllerGen.getTransitControllerGUI(), ControllerGen.getTruckControllerGUI(),
+                            ControllerGen.getTransitCoordinator(), ControllerGen.getOrderDocumentControllerGui(), ControllerGen.getTransitRecordController());
                 } catch (SQLException | ClassNotFoundException ex)
                 {
                     ex.printStackTrace();

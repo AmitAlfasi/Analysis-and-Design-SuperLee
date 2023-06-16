@@ -3,6 +3,7 @@ package ControllerLayer;
 import DataAccessLayer.TruckDAO;
 import DomainLayer.Truck;
 import javax.swing.*;
+import java.awt.*;
 import java.util.Set;
 
 public class TruckControllerImplGui extends TruckControllerImpl {
@@ -29,8 +30,10 @@ public class TruckControllerImplGui extends TruckControllerImpl {
             JTextArea textArea = new JTextArea(message.toString());
             textArea.setEditable(false);
             JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(500, 400));
 
             JOptionPane.showMessageDialog(null, scrollPane, "Truck Manager", JOptionPane.PLAIN_MESSAGE);
         }
     }
+
 }
