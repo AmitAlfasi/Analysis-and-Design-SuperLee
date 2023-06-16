@@ -3,6 +3,8 @@ package ControllerLayer;
 import DataAccessLayer.ProductDAO;
 import DomainLayer.Product;
 
+import java.util.Set;
+
 public class ProductControllerImpl implements ProductController {
     private final ProductDAO productDAO;
 
@@ -26,4 +28,10 @@ public class ProductControllerImpl implements ProductController {
             product.printProduct();
         }
     }
+    @Override
+    public Set<Product> getProductSet()
+    {
+        return productDAO.getProductsSet();
+    }
+
 }

@@ -71,8 +71,18 @@ class OrderDocumentGui extends JFrame {
                 gbc.gridx = 1;
                 gbc.gridy = 1;
                 inputPanel.add(branchStoreIdField, gbc);
+//                Set<Product> products = productController.getProductSet();
+//
+//                String[] productOptions = { "null", "Apple", "Banana", "Orange" };
+                Set<Product> products = productController.getProductSet();
 
-                String[] productOptions = { "null", "Apple", "Banana", "Orange" };
+                String[] productOptions = new String[products.size()];
+
+                int index = 0;
+                for (Product product : products) {
+                    productOptions[index] = product.getProductName();
+                    index++;
+                }
 
                 for (int i = 0; i < 3; i++) {
                     gbc.gridx = 0;
@@ -219,163 +229,185 @@ class OrderDocumentGui extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-}
 
-class EditOrderGui extends JFrame {
-    public EditOrderGui() {
-        setTitle("Edit Order");
-        setSize(400, 300);
-        setLayout(new GridLayout(4, 1));
 
-        JButton addProductsButton = new JButton("Add products to an order");
-        JButton changeProductAmountButton = new JButton("Change the amount of a product");
-        JButton removeProductsButton = new JButton("Remove products");
-        JButton backButton = new JButton("Back to Manage Orders");
-        backButton.setForeground(Color.red);
+    class EditOrderGui extends JFrame {
 
-        addProductsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JPanel inputPanel = new JPanel();
-                inputPanel.setLayout(new GridBagLayout());
-                GridBagConstraints gbc = new GridBagConstraints();
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.insets = new Insets(20, 15, 10, 15);
 
-                JTextField orderDocumentIdField = new JTextField(10);
-                JComboBox<String>[] productComboBoxes = new JComboBox[3];
-                JTextField[] amountFields = new JTextField[3];
+        public EditOrderGui() {
+            setTitle("Edit Order");
+            setSize(400, 300);
+            setLayout(new GridLayout(4, 1));
 
-                gbc.gridx = 0;
-                gbc.gridy = 0;
-                inputPanel.add(new JLabel("Order Document ID:"), gbc);
+            JButton addProductsButton = new JButton("Add products to an order");
+            JButton changeProductAmountButton = new JButton("Change the amount of a product");
+            JButton removeProductsButton = new JButton("Remove products");
+            JButton backButton = new JButton("Back to Manage Orders");
+            backButton.setForeground(Color.red);
 
-                gbc.gridx = 1;
-                gbc.gridy = 0;
-                inputPanel.add(orderDocumentIdField, gbc);
+            addProductsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JPanel inputPanel = new JPanel();
+                    inputPanel.setLayout(new GridBagLayout());
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.fill = GridBagConstraints.HORIZONTAL;
+                    gbc.insets = new Insets(20, 15, 10, 15);
 
-                String[] productOptions = { "Apple", "Orange", "Banana" };
-
-                for (int i = 0; i < 3; i++) {
-                    gbc.gridx = 0;
-                    gbc.gridy = i * 3 + 1;
-                    productComboBoxes[i] = new JComboBox<>(productOptions);
-                    inputPanel.add(new JLabel("Product " + (i + 1) + ":"), gbc);
-
-                    gbc.gridx = 1;
-                    gbc.gridy = i * 3 + 1;
-                    inputPanel.add(productComboBoxes[i], gbc);
+                    JTextField orderDocumentIdField = new JTextField(10);
+                    JComboBox<String>[] productComboBoxes = new JComboBox[3];
+                    JTextField[] amountFields = new JTextField[3];
 
                     gbc.gridx = 0;
-                    gbc.gridy = i * 3 + 2;
-                    inputPanel.add(new JLabel("Amount:"), gbc);
+                    gbc.gridy = 0;
+                    gbc.gridwidth = 2;
+                    inputPanel.add(new JLabel("Order Document ID:"), gbc);
 
-                    gbc.gridx = 1;
-                    gbc.gridy = i * 3 + 2;
-                    amountFields[i] = new JTextField(10);
-                    inputPanel.add(amountFields[i], gbc);
-                }
+                    gbc.gridx = 0;
+                    gbc.gridy = 1;
+                    gbc.gridwidth = 2;
+                    inputPanel.add(orderDocumentIdField, gbc);
 
-                inputPanel.setPreferredSize(new Dimension(300, 250));
+                    Set<Product> products = productController.getProductSet();
 
-                JScrollPane scrollPane = new JScrollPane(inputPanel); // Wrap inputPanel in a JScrollPane
+                    String[] productOptions = new String[products.size() + 1];
+                    productOptions[0] = "null";
 
-                // Add mouse wheel listener to the scrollPane
-                scrollPane.addMouseWheelListener(new MouseWheelListener() {
-                    @Override
-                    public void mouseWheelMoved(MouseWheelEvent e) {
-                        JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
-                        verticalScrollBar.setValue(verticalScrollBar.getValue() - e.getWheelRotation() * verticalScrollBar.getUnitIncrement());
+                    int index = 1;
+                    for (Product product : products) {
+                        productOptions[index] = product.getProductName();
+                        index++;
                     }
-                });
-
-                int result = JOptionPane.showConfirmDialog(null, scrollPane, "Add Products", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-                if (result == JOptionPane.OK_OPTION) {
-                    int orderDocumentId;
-                    try {
-                        orderDocumentId = Integer.parseInt(orderDocumentIdField.getText());
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null, "Invalid input! Please enter a valid integer for Order Document ID.", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    java.util.List<String> selectedProducts = new ArrayList<>();
-                    List<Double> amounts = new ArrayList<>();
 
                     for (int i = 0; i < 3; i++) {
-                        String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
-                        double amount;
+                        gbc.gridx = 0;
+                        gbc.gridy = i * 3 + 2;
+                        gbc.gridwidth = 1;
+                        productComboBoxes[i] = new JComboBox<>(productOptions);
+                        inputPanel.add(new JLabel("Product " + (i + 1) + ":"), gbc);
 
-                        if (!selectedProduct.equals("null")) {
-                            try {
-                                amount = Double.parseDouble(amountFields[i].getText());
-                            } catch (NumberFormatException ex) {
-                                JOptionPane.showMessageDialog(null, "Invalid input! Please enter valid doubles for Amount.", "Error", JOptionPane.ERROR_MESSAGE);
-                                return;
-                            }
+                        gbc.gridx = 1;
+                        gbc.gridy = i * 3 + 2;
+                        gbc.gridwidth = 2;
+                        inputPanel.add(productComboBoxes[i], gbc);
 
-                            selectedProducts.add(selectedProduct);
-                            amounts.add(amount);
+                        gbc.gridx = 0;
+                        gbc.gridy = i * 3 + 3;
+                        gbc.gridwidth = 1;
+                        inputPanel.add(new JLabel("Amount:"), gbc);
+
+                        gbc.gridx = 1;
+                        gbc.gridy = i * 3 + 3;
+                        gbc.gridwidth = 2;
+                        amountFields[i] = new JTextField(10);
+                        inputPanel.add(amountFields[i], gbc);
+                    }
+
+                    inputPanel.setPreferredSize(new Dimension(300, 250));
+                    JScrollPane scrollPane = new JScrollPane(inputPanel);
+
+                    // Add the MouseWheelListener to the inputPanel directly
+                    inputPanel.addMouseWheelListener(new MouseWheelListener() {
+                        @Override
+                        public void mouseWheelMoved(MouseWheelEvent e) {
+                            JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+                            verticalScrollBar.setValue(verticalScrollBar.getValue() - e.getWheelRotation() * verticalScrollBar.getUnitIncrement());
                         }
+                    });
+
+                    int result = JOptionPane.showConfirmDialog(null, scrollPane, "Add Products", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+                    if (result == JOptionPane.OK_OPTION) {
+                        int orderDocumentId;
+                        try {
+                            orderDocumentId = Integer.parseInt(orderDocumentIdField.getText());
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(null, "Invalid input! Please enter a valid integer for Order Document ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        List<String> selectedProducts = new ArrayList<>();
+                        List<Double> amounts = new ArrayList<>();
+
+                        for (int i = 0; i < 3; i++) {
+                            String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
+                            double amount;
+
+                            if (!selectedProduct.equals("null")) {
+                                try {
+                                    amount = Double.parseDouble(amountFields[i].getText());
+                                } catch (NumberFormatException ex) {
+                                    JOptionPane.showMessageDialog(null, "Invalid input! Please enter valid doubles for Amount.", "Error", JOptionPane.ERROR_MESSAGE);
+                                    return;
+                                }
+
+                                selectedProducts.add(selectedProduct);
+                                amounts.add(amount);
+                            }
+                        }
+
+                        StringBuilder message = new StringBuilder();
+                        message.append("Order Document ID: ").append(orderDocumentId).append("\n");
+
+                        for (int i = 0; i < selectedProducts.size(); i++) {
+                            String product = selectedProducts.get(i);
+                            double amount = amounts.get(i);
+                            message.append("Product ").append(i + 1).append(": ").append(product).append(", Amount: ").append(amount).append("\n");
+                        }
+
+                        JOptionPane.showMessageDialog(null, message.toString(), "Products Added", JOptionPane.INFORMATION_MESSAGE);
+                        // Perform any additional actions if needed
                     }
+                }
+            });
 
-                    StringBuilder message = new StringBuilder();
-                    message.append("Order Document ID: ").append(orderDocumentId).append("\n");
 
-                    for (int i = 0; i < selectedProducts.size(); i++) {
-                        String product = selectedProducts.get(i);
-                        double amount = amounts.get(i);
-                        message.append("Product ").append(i + 1).append(": ").append(product).append(", Amount: ").append(amount).append("\n");
+
+
+
+
+
+
+
+            changeProductAmountButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Code to handle change product amount action
+                }
+            });
+
+            removeProductsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Code to handle remove products action
+                }
+            });
+
+            backButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    dispose();
+                    OrderDocumentGui orderDocumentGui = null;
+                    try {
+                        orderDocumentGui = new OrderDocumentGui(ControllerGen.getOrderDocumentControllerGui(),
+                                ControllerGen.getProductController(),
+                                ControllerGen.getSupplierController(),
+                                ControllerGen.getTransitCoordinator());
+                    } catch (SQLException | ClassNotFoundException ex) {
+                        ex.printStackTrace();
                     }
-
-                    JOptionPane.showMessageDialog(null, message.toString(), "Products Added", JOptionPane.INFORMATION_MESSAGE);
-                    // Perform any additional actions if needed
+                    orderDocumentGui.setVisible(true);
                 }
-            }
-        });
+            });
 
+            add(addProductsButton);
+            add(changeProductAmountButton);
+            add(removeProductsButton);
+            add(backButton);
 
-
-
-        changeProductAmountButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Code to handle change product amount action
-            }
-        });
-
-        removeProductsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Code to handle remove products action
-            }
-        });
-
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                OrderDocumentGui orderDocumentGui = null;
-                try {
-                    orderDocumentGui = new OrderDocumentGui(ControllerGen.getOrderDocumentControllerGui(),
-                            ControllerGen.getProductController(),
-                            ControllerGen.getSupplierController(),
-                            ControllerGen.getTransitCoordinator());
-                } catch (SQLException | ClassNotFoundException ex) {
-                    ex.printStackTrace();
-                }
-                orderDocumentGui.setVisible(true);
-            }
-        });
-
-        add(addProductsButton);
-        add(changeProductAmountButton);
-        add(removeProductsButton);
-        add(backButton);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setVisible(true);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
+            setVisible(true);
+        }
     }
 }
