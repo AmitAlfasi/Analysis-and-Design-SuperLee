@@ -68,14 +68,15 @@ class OrderDocumentGui extends JFrame {
                 gbc.gridx = 1;
                 gbc.gridy = 1;
                 inputPanel.add(branchStoreIdField, gbc);
-//                Set<Product> products = productController.getProductSet();
-//
-//                String[] productOptions = { "null", "Apple", "Banana", "Orange" };
+
                 Set<Product> products = productController.getProductSet();
 
-                String[] productOptions = new String[products.size()];
+                String[] productOptions = new String[products.size() + 1]; // Increase the size by 1
 
-                int index = 0;
+                // Add "null" as the first option
+                productOptions[0] = "null";
+
+                int index = 1; // Start from index 1
                 for (Product product : products) {
                     productOptions[index] = product.getProductName();
                     index++;
@@ -101,7 +102,7 @@ class OrderDocumentGui extends JFrame {
                     inputPanel.add(amountFields[i], gbc);
                 }
 
-                inputPanel.setPreferredSize(new Dimension(300, 430));
+                inputPanel.setPreferredSize(new Dimension(300, 550));
 
                 int result = JOptionPane.showConfirmDialog(null, inputPanel, "Create Order", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
@@ -119,6 +120,22 @@ class OrderDocumentGui extends JFrame {
                         branchStoreId = Integer.parseInt(branchStoreIdField.getText());
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "Invalid input! Please enter a valid integer for Branch Store ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Check if at least one product is selected
+                    boolean productSelected = false;
+
+                    for (int i = 0; i < 3; i++) {
+                        String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
+                        if (!selectedProduct.equals("null")) {
+                            productSelected = true;
+                            break;
+                        }
+                    }
+
+                    if (!productSelected) {
+                        JOptionPane.showMessageDialog(null, "Please select at least one product.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -151,6 +168,13 @@ class OrderDocumentGui extends JFrame {
                             amounts[lineIndex] = amount;
 
                             lineIndex++;
+                        } else {
+                            // Show an error if amount is entered for a "null" product
+                            String amountText = amountFields[i].getText();
+                            if (!amountText.isEmpty()) {
+                                JOptionPane.showMessageDialog(null, "Please enter the amount only for selected products.", "Error", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
                         }
                     }
 
@@ -257,17 +281,17 @@ class OrderDocumentGui extends JFrame {
 
                     gbc.gridx = 0;
                     gbc.gridy = 0;
-                    gbc.gridwidth = 2;
-                    inputPanel.add(new JLabel("Order Document ID:"), gbc);
+                    gbc.gridwidth = 1;
+                    inputPanel.add(new JLabel("Enter order document id:"), gbc);
 
-                    gbc.gridx = 0;
-                    gbc.gridy = 1;
-                    gbc.gridwidth = 2;
+                    gbc.gridx = 1;
+                    gbc.gridy = 0;
+                    gbc.gridwidth = 1;
                     inputPanel.add(orderDocumentIdField, gbc);
 
                     Set<Product> products = productController.getProductSet();
 
-                    String[] productOptions = new String[products.size() + 1];
+                    String[] productOptions = new String[products.size() + 2];
                     productOptions[0] = "null";
 
                     int index = 1;
@@ -300,11 +324,15 @@ class OrderDocumentGui extends JFrame {
                         inputPanel.add(amountFields[i], gbc);
                     }
 
+                    // Adjust the preferred size of the inputPanel
                     inputPanel.setPreferredSize(new Dimension(300, 250));
-                    JScrollPane scrollPane = new JScrollPane(inputPanel);
 
-                    // Add the MouseWheelListener to the inputPanel directly
-                    inputPanel.addMouseWheelListener(new MouseWheelListener() {
+                    JScrollPane scrollPane = new JScrollPane();
+                    scrollPane.setViewportView(inputPanel);
+                    scrollPane.setPreferredSize(new Dimension(400, 300));
+
+                    // Add the MouseWheelListener to the scrollPane
+                    scrollPane.addMouseWheelListener(new MouseWheelListener() {
                         @Override
                         public void mouseWheelMoved(MouseWheelEvent e) {
                             JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
@@ -325,6 +353,7 @@ class OrderDocumentGui extends JFrame {
 
                         List<String> selectedProducts = new ArrayList<>();
                         List<Double> amounts = new ArrayList<>();
+                        boolean hasEmptyAmount = false;  // Flag to track empty amounts
 
                         for (int i = 0; i < 3; i++) {
                             String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
@@ -340,7 +369,18 @@ class OrderDocumentGui extends JFrame {
 
                                 selectedProducts.add(selectedProduct);
                                 amounts.add(amount);
+                            } else {
+                                // Check if amount is empty when product is null
+                                if (amountFields[i].getText().isEmpty()) {
+                                    hasEmptyAmount = true;
+                                }
                             }
+                        }
+
+                        // Display error message if at least one product has an empty amount
+                        if (hasEmptyAmount) {
+                            JOptionPane.showMessageDialog(null, "Please enter the amount for all selected products.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
                         }
 
                         StringBuilder message = new StringBuilder();
@@ -357,6 +397,7 @@ class OrderDocumentGui extends JFrame {
                     }
                 }
             });
+
 
 
 
