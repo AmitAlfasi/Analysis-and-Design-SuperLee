@@ -325,7 +325,7 @@ class OrderDocumentGui extends JFrame {
                     }
 
                     // Adjust the preferred size of the inputPanel
-                    inputPanel.setPreferredSize(new Dimension(300, 250));
+                    inputPanel.setPreferredSize(new Dimension(300, 450));
 
                     JScrollPane scrollPane = new JScrollPane();
                     scrollPane.setViewportView(inputPanel);
@@ -350,10 +350,17 @@ class OrderDocumentGui extends JFrame {
                             JOptionPane.showMessageDialog(null, "Invalid input! Please enter a valid integer for Order Document ID.", "Error", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
+                        OrderDocument orderDocument = orderDocumentControllerImplGui.findOrderDocById(orderDocumentId);
+                        if (orderDocument == null) {
+                            JOptionPane.showMessageDialog(null, "Order document number does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
 
                         List<String> selectedProducts = new ArrayList<>();
                         List<Double> amounts = new ArrayList<>();
                         boolean hasEmptyAmount = false;  // Flag to track empty amounts
+
+                        boolean hasNonNullProduct = false; // Flag variable
 
                         for (int i = 0; i < 3; i++) {
                             String selectedProduct = (String) productComboBoxes[i].getSelectedItem();
@@ -363,40 +370,50 @@ class OrderDocumentGui extends JFrame {
                                 try {
                                     amount = Double.parseDouble(amountFields[i].getText());
                                 } catch (NumberFormatException ex) {
-                                    JOptionPane.showMessageDialog(null, "Invalid input! Please enter valid doubles for Amount.", "Error", JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(null, "Invalid input! Please enter valid amounts.", "Error", JOptionPane.ERROR_MESSAGE);
                                     return;
                                 }
 
                                 selectedProducts.add(selectedProduct);
                                 amounts.add(amount);
+                                hasNonNullProduct = true; // Set the flag to true
                             } else {
                                 // Check if amount is empty when product is null
-                                if (amountFields[i].getText().isEmpty()) {
-                                    hasEmptyAmount = true;
+                                if (!amountFields[i].getText().isEmpty()) {
+                                    JOptionPane.showMessageDialog(null, "Please set the product to null when the amount is empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                                    return;
                                 }
                             }
                         }
 
-                        // Display error message if at least one product has an empty amount
-                        if (hasEmptyAmount) {
-                            JOptionPane.showMessageDialog(null, "Please enter the amount for all selected products.", "Error", JOptionPane.ERROR_MESSAGE);
+// Display error message if all products are null
+                        if (!hasNonNullProduct) {
+                            JOptionPane.showMessageDialog(null, "Please select at least one non-null product to add.", "Error", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
 
+
                         StringBuilder message = new StringBuilder();
                         message.append("Order Document ID: ").append(orderDocumentId).append("\n");
-
+                        int weight=0;
                         for (int i = 0; i < selectedProducts.size(); i++) {
                             String product = selectedProducts.get(i);
+                            int productId = productController.findProductByName(product).getProductId();
                             double amount = amounts.get(i);
+                            weight +=amount;
+                            orderDocumentControllerImplGui.addProductToOrderDocDB(orderDocumentId,productId,amount);
                             message.append("Product ").append(i + 1).append(": ").append(product).append(", Amount: ").append(amount).append("\n");
                         }
-
+                        orderDocumentControllerImplGui.updateWeightDB(orderDocument,weight);
                         JOptionPane.showMessageDialog(null, message.toString(), "Products Added", JOptionPane.INFORMATION_MESSAGE);
-                        // Perform any additional actions if needed
+
                     }
                 }
             });
+
+// Set the size of the dialog window manually
+//            Dimension windowSize = new Dimension(500, 700);
+//            JOptionPane.getRootFrame().setSize(windowSize);
 
 
 
