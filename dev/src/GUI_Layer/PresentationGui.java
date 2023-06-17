@@ -33,9 +33,13 @@ public class PresentationGui extends JFrame {
                 {
                     ex.printStackTrace();
                 }
+                dispose();
+                transitGui.setAlwaysOnTop(true);
+                transitGui.navigateToMainMenu();
                 transitGui.createNewTransit();
             }
         });
+
 
         updateTransitButton.addActionListener(new ActionListener() {
             @Override

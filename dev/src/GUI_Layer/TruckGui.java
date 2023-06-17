@@ -27,10 +27,13 @@ class TruckGui extends JFrame {
 
             JLabel plateNumberLabel = new JLabel("Truck Plate Number:");
             JTextField plateNumberField = new JTextField();
+            plateNumberField.setHorizontalAlignment(JTextField.CENTER); // Aligns cursor to the center
             JLabel truckWeightLabel = new JLabel("Truck Weight (kg):");
             JTextField truckWeightField = new JTextField();
+            truckWeightField.setHorizontalAlignment(JTextField.CENTER); // Aligns cursor to the center
             JLabel maxWeightLabel = new JLabel("Max Carry Weight (kg):");
             JTextField maxWeightField = new JTextField();
+            maxWeightField.setHorizontalAlignment(JTextField.CENTER); // Aligns cursor to the center
             JLabel truckModelLabel = new JLabel("Truck Model:");
             JComboBox<TruckModel> truckModelComboBox = new JComboBox<>(TruckModel.values());
             JLabel qualificationsLabel = new JLabel("Truck Qualifications:");
@@ -38,7 +41,7 @@ class TruckGui extends JFrame {
             JComboBox<License> licenseComboBox = new JComboBox<>(new License[]{License.C1, License.C});
             JCheckBox coolerCheckBox = new JCheckBox("Cooler");
             JButton addButton = new JButton("Add");
-            JButton escapeButton = new JButton("Exit");
+            JButton escapeButton = new JButton("Cancel");
             escapeButton.setForeground(Color.red);
 
             addButton.addActionListener(e1 -> {

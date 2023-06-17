@@ -43,8 +43,8 @@ class TransitGui extends JFrame {
         JButton replaceTruckButton = new JButton("Replace truck");
         JButton startTransitButton = new JButton("Start transit");
         JButton ShowStoreAvailabilityButton = new JButton("Show store availability for receiving transit");
-        JButton backButton = new JButton("Back to Delivery System Menu");
-        backButton.setForeground(Color.red);
+        JButton backToMainMenuButton = new JButton("Back to Delivery System Menu");
+        backToMainMenuButton.setForeground(Color.red);
 
         ShowTransitDetailsButton.addActionListener(e -> {
             JFrame transitIdFrame = new JFrame("Enter Transit ID");
@@ -93,12 +93,14 @@ class TransitGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 JFrame addOrderFrame = new JFrame("Add Order to Transit");
                 addOrderFrame.setSize(400, 200);
-                addOrderFrame.setLayout(new GridLayout(3, 2));
+                addOrderFrame.setLayout(new GridLayout(5, 2));
 
                 JLabel transitIdLabel = new JLabel("Transit ID:");
                 JTextField transitIdField = new JTextField();
+                transitIdField.setHorizontalAlignment(JTextField.CENTER);
                 JLabel orderIdLabel = new JLabel("Order ID:");
                 JTextField orderIdField = new JTextField();
+                orderIdField.setHorizontalAlignment(JTextField.CENTER);
                 JButton addButton = new JButton("Add");
                 JButton cancelButton = new JButton("Cancel");
                 cancelButton.setForeground(Color.red);
@@ -148,8 +150,12 @@ class TransitGui extends JFrame {
                 addOrderFrame.add(transitIdField);
                 addOrderFrame.add(orderIdLabel);
                 addOrderFrame.add(orderIdField);
-                addOrderFrame.add(addButton);
+                addOrderFrame.add(new JLabel()); // Empty label for alignment
+                addOrderFrame.add(new JLabel()); // Empty label for alignment
+                addOrderFrame.add(new JLabel()); // Empty label for alignment
+                addOrderFrame.add(new JLabel()); // Empty label for alignment
                 addOrderFrame.add(cancelButton);
+                addOrderFrame.add(addButton);
                 addOrderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 addOrderFrame.setLocationRelativeTo(null);
                 addOrderFrame.setVisible(true);
@@ -161,12 +167,14 @@ class TransitGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 JFrame removeOrderFrame = new JFrame("Remove Order from Transit");
                 removeOrderFrame.setSize(400, 200);
-                removeOrderFrame.setLayout(new GridLayout(3, 2));
+                removeOrderFrame.setLayout(new GridLayout(5, 2));
 
                 JLabel transitIdLabel = new JLabel("Transit ID:");
                 JTextField transitIdField = new JTextField();
+                transitIdField.setHorizontalAlignment(JTextField.CENTER);
                 JLabel orderIdLabel = new JLabel("Order ID:");
                 JTextField orderIdField = new JTextField();
+                orderIdField.setHorizontalAlignment(JTextField.CENTER);
                 JButton removeButton = new JButton("Remove");
                 JButton cancelButton = new JButton("Cancel");
                 cancelButton.setForeground(Color.red);
@@ -216,8 +224,12 @@ class TransitGui extends JFrame {
                 removeOrderFrame.add(transitIdField);
                 removeOrderFrame.add(orderIdLabel);
                 removeOrderFrame.add(orderIdField);
-                removeOrderFrame.add(removeButton);
+                removeOrderFrame.add(new JLabel()); // Empty label for alignment
+                removeOrderFrame.add(new JLabel()); // Empty label for alignment
+                removeOrderFrame.add(new JLabel()); // Empty label for alignment
+                removeOrderFrame.add(new JLabel()); // Empty label for alignment
                 removeOrderFrame.add(cancelButton);
+                removeOrderFrame.add(removeButton);
                 removeOrderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 removeOrderFrame.setLocationRelativeTo(null);
                 removeOrderFrame.setVisible(true);
@@ -299,10 +311,8 @@ class TransitGui extends JFrame {
 
 
 
-        backButton.addActionListener(e -> {
-            dispose();
-            PresentationGui presentationGui = new PresentationGui();
-            presentationGui.setVisible(true);
+        backToMainMenuButton.addActionListener(e -> {
+            navigateToMainMenu();
         });
 
         add(ShowTransitDetailsButton);
@@ -312,7 +322,7 @@ class TransitGui extends JFrame {
         add(replaceTruckButton);
         add(startTransitButton);
         add(ShowStoreAvailabilityButton);
-        add(backButton);
+        add(backToMainMenuButton);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -323,16 +333,20 @@ class TransitGui extends JFrame {
     public void createNewTransit() {
         JFrame createTransitFrame = new JFrame("Create New Transit");
         createTransitFrame.setSize(400, 300);
-        createTransitFrame.setLayout(new GridLayout(5, 2));
+        createTransitFrame.setLayout(new GridLayout(9, 2));
 
         JLabel transitDateLabel = new JLabel("Transit Date (yyyy-MM-dd):");
         JTextField transitDateField = new JTextField();
+        transitDateField.setHorizontalAlignment(JTextField.CENTER); // Aligns cursor to the center
         JLabel plateNumberLabel = new JLabel("Truck's Plate Number:");
         JTextField plateNumberField = new JTextField();
+        plateNumberField.setHorizontalAlignment(JTextField.CENTER); // Aligns cursor to the center
         JLabel driverIdLabel = new JLabel("Driver's ID:");
         JTextField driverIdField = new JTextField();
+        driverIdField.setHorizontalAlignment(JTextField.CENTER); // Aligns cursor to the center
         JButton createButton = new JButton("Create");
         JButton cancelButton = new JButton("Cancel");
+        cancelButton.setForeground(Color.red);
 
         createButton.addActionListener(e -> {
             String transitDate = transitDateField.getText();
@@ -367,8 +381,16 @@ class TransitGui extends JFrame {
         createTransitFrame.add(driverIdField);
         createTransitFrame.add(new JLabel()); // Empty label for alignment
         createTransitFrame.add(new JLabel()); // Empty label for alignment
-        createTransitFrame.add(createButton);
+        createTransitFrame.add(new JLabel()); // Empty label for alignment
+        createTransitFrame.add(new JLabel()); // Empty label for alignment
+        createTransitFrame.add(new JLabel()); // Empty label for alignment
+        createTransitFrame.add(new JLabel()); // Empty label for alignment
+        createTransitFrame.add(new JLabel()); // Empty label for alignment
+        createTransitFrame.add(new JLabel()); // Empty label for alignment
+        createTransitFrame.add(new JLabel()); // Empty label for alignment
+        createTransitFrame.add(new JLabel()); // Empty label for alignment
         createTransitFrame.add(cancelButton);
+        createTransitFrame.add(createButton);
         createTransitFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         createTransitFrame.setLocationRelativeTo(null);
         createTransitFrame.setVisible(true);
@@ -412,5 +434,10 @@ class TransitGui extends JFrame {
 
             JOptionPane.showMessageDialog(null, scrollPane, "Transit Details", JOptionPane.PLAIN_MESSAGE);
         }
+    }
+    public void navigateToMainMenu() {
+        dispose();
+        PresentationGui presentationGui = new PresentationGui();
+        presentationGui.setVisible(true);
     }
 }
