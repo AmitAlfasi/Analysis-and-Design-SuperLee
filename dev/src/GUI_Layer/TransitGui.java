@@ -240,9 +240,49 @@ class TransitGui extends JFrame {
         replaceTruckButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Code to handle replace truck action
+                // Prompt the user for transit ID
+                String transitIdInput = JOptionPane.showInputDialog(null, "Enter transit ID:");
+                if (transitIdInput == null) {
+                    return; // User clicked cancel or closed the window
+                }
+
+                int transitId;
+                try {
+                    transitId = Integer.parseInt(transitIdInput);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Invalid transit ID. Please enter a numeric value.");
+                    return; // Exit the method
+                }
+
+                // Prompt the user for new truck plate number
+                String newTruckPlate = JOptionPane.showInputDialog(null, "Enter new truck plate number:");
+                if (newTruckPlate == null) {
+                    return; // User clicked cancel or closed the window
+                }
+
+                int flag = transitControllerGui.replaceTransitTruck(transitId, newTruckPlate);
+
+                switch (flag) {
+                    case -2:
+                        JOptionPane.showMessageDialog(null, "Transit id " + transitId + " not found!");
+                        break;
+                    case -1:
+                        JOptionPane.showMessageDialog(null, "Truck's plate number " + newTruckPlate + " not found!");
+                        break;
+                    case 0:
+                        JOptionPane.showMessageDialog(null, "Current driver is not qualified to drive the chosen truck");
+                        lookForQualifiedDriver(transitId, newTruckPlate);
+                        break;
+                    case 1:
+                        JOptionPane.showMessageDialog(null, "Transit's truck updated successfully");
+                        break;
+                }
             }
         });
+
+
+
+
 
         startTransitButton.addActionListener(new ActionListener() {
             @Override
@@ -440,4 +480,25 @@ class TransitGui extends JFrame {
         PresentationGui presentationGui = new PresentationGui();
         presentationGui.setVisible(true);
     }
+
+    private void lookForQualifiedDriver(int transitIdToReplace, String newTruckPlate) {
+        String driverId = JOptionPane.showInputDialog("Enter qualified driver ID:");
+
+        if (driverId == null) {
+            return; // User clicked cancel or closed the window
+        }
+
+        int iFlag = transitControllerGui.replaceTransitDriver(transitIdToReplace, driverId, newTruckPlate, "notOnTheFly");
+
+        if (iFlag == -1) {
+            JOptionPane.showMessageDialog(null, "Driver ID: " + driverId + " not found");
+        } else if (iFlag == 0) {
+            JOptionPane.showMessageDialog(null, "Chosen driver: " + driverId + " is not qualified to drive the chosen truck");
+        } else if (iFlag == 1) {
+            JOptionPane.showMessageDialog(null, "Transit's driver updated successfully");
+        }
+    }
+
+
+
 }
