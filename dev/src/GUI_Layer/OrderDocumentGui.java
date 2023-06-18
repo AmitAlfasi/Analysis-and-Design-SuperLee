@@ -434,9 +434,124 @@ class OrderDocumentGui extends JFrame {
             removeProductsButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Code to handle remove products action
+                    // Create the window
+                    JFrame frame = new JFrame("Remove Products");
+                    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                    // Create the label for the order document ID input
+                    JLabel orderIdLabel = new JLabel("Order Document ID:");
+                    orderIdLabel.setBounds(10, 10, 120, 25);
+                    frame.add(orderIdLabel);
+
+                    // Create the text field for the order document ID input
+                    JTextField orderIdField = new JTextField();
+                    orderIdField.setBounds(140, 10, 150, 25);
+                    frame.add(orderIdField);
+
+                    // Create the label for the product selection
+                    JLabel productLabel = new JLabel("Select a product:");
+                    productLabel.setBounds(10, 40, 120, 25);
+                    frame.add(productLabel);
+
+                    // Create the combo box for product selection
+                    JComboBox<String> productComboBox = new JComboBox<>();
+                    productComboBox.setBounds(140, 40, 150, 25);
+
+                    // Add products to the combo box (replace with your product list)
+                    Set<Product> products = productController.getProductSet();
+
+//                    String[] productOptions = new String[products.size()]; // Increase the size by 1
+
+                    int index = 0; // Start from index 1
+                    for (Product product : products) {
+                        productComboBox.addItem(product.getProductName());
+                        index++;
+                    }
+
+                    frame.add(productComboBox);
+
+                    // Create the cancel button
+                    JButton cancelButton = new JButton("Cancel");
+                    cancelButton.setBounds(50, 80, 80, 25);
+                    cancelButton.setForeground(Color.RED); // Set the background color to red
+                    frame.add(cancelButton);
+
+
+
+                    // Create the OK button
+                    JButton okButton = new JButton("OK");
+                    okButton.setBounds(150, 80, 80, 25);
+                    frame.add(okButton);
+
+                    // Set the action listener for the cancel button
+                    cancelButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            frame.dispose(); // Close the window when cancel is clicked
+                        }
+                    });
+
+                    // Set the action listener for the OK button
+                    okButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // Get the order document ID from the text field
+                            String orderIdText = orderIdField.getText();
+
+                            // Validate that the input is an integer
+                            try {
+                                int orderId = Integer.parseInt(orderIdText);
+
+                                // Get the selected product from the combo box
+                                String selectedProduct = (String) productComboBox.getSelectedItem();
+
+                                // Check if the order document exists in the database
+                                boolean orderExists = orderDocumentControllerImplGui.orderDocumentChooser(orderId);
+
+                                if (orderExists) {
+                                    // Remove the specific product from the order
+                                    orderDocumentControllerImplGui.removeProductFromOrderDocDBdP(orderId, selectedProduct);
+
+
+                                        // Display a success message
+                                        JOptionPane.showMessageDialog(frame, "Product removed successfully from Order Document ID: " + orderId,
+                                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                else
+                                {
+                                    // Display an error message if the order document does not exist
+                                    JOptionPane.showMessageDialog(frame, "Order Document ID: " + orderId + " does not exist.",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+
+                                frame.dispose(); // Close the window after processing the action
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(frame, "Invalid input for Order Document ID. Please enter an integer value.",
+                                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    });
+
+
+                    // Set the layout and display the window
+                    frame.setLayout(null);
+                    frame.setSize(320, 150);
+
+                    // Get the screen dimensions
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+                    // Calculate the x and y coordinates for centering the frame
+                    int centerX = (screenSize.width - frame.getWidth()) / 2;
+                    int centerY = (screenSize.height - frame.getHeight()) / 2;
+
+                    // Set the frame's location
+                    frame.setLocation(centerX, centerY);
+
+                    frame.setVisible(true);
                 }
             });
+
+
 
             backButton.addActionListener(new ActionListener() {
                 @Override
