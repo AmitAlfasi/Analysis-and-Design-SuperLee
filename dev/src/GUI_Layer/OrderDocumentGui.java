@@ -102,7 +102,17 @@ class OrderDocumentGui extends JFrame {
                     inputPanel.add(amountFields[i], gbc);
                 }
 
-                inputPanel.setPreferredSize(new Dimension(300, 550));
+                inputPanel.setPreferredSize(new Dimension(300, 430));
+
+                UIManager.put("OptionPane.okButtonText", "Ok");
+
+                UIManager.put("OptionPane.cancelButtonText", "Cancel");
+
+                // Switch the OK and Cancel button positions
+                UIManager.put("OptionPane.buttonOrientation", SwingConstants.CENTER);
+
+                // Set the default option pane button colors
+                UIManager.put("OptionPane.cancelButtonText", "<html><font color='red'>Cancel</font></html>");
 
                 int result = JOptionPane.showConfirmDialog(null, inputPanel, "Create Order", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
@@ -339,9 +349,18 @@ class OrderDocumentGui extends JFrame {
                             verticalScrollBar.setValue(verticalScrollBar.getValue() - e.getWheelRotation() * verticalScrollBar.getUnitIncrement());
                         }
                     });
+                    UIManager.put("OptionPane.okButtonText", "Cancel");
+                    UIManager.put("OptionPane.okButtonText", "Ok");
+
+                    UIManager.put("OptionPane.cancelButtonText", "Cancel");
+
+                    // Switch the OK and Cancel button positions
+                    UIManager.put("OptionPane.buttonOrientation", SwingConstants.CENTER);
+
+                    // Set the default option pane button colors
+                    UIManager.put("OptionPane.cancelButtonText", "<html><font color='red'>Cancel</font></html>");
 
                     int result = JOptionPane.showConfirmDialog(null, scrollPane, "Add Products", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
                     if (result == JOptionPane.OK_OPTION) {
                         int orderDocumentId;
                         try {
@@ -411,25 +430,109 @@ class OrderDocumentGui extends JFrame {
                 }
             });
 
-// Set the size of the dialog window manually
-//            Dimension windowSize = new Dimension(500, 700);
-//            JOptionPane.getRootFrame().setSize(windowSize);
-
-
-
-
-
-
-
-
-
 
             changeProductAmountButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Code to handle change product amount action
+                    // Create a dialog box
+                    JFrame frame = new JFrame("Change Product Amount");
+                    JPanel panel = new JPanel();
+                    frame.add(panel);
+                    panel.setLayout(new GridLayout(4, 2));
+
+                    // Add components to the dialog box
+                    JTextField orderDocumentField = new JTextField();
+                    panel.add(new JLabel("Order Document ID:"));
+                    panel.add(orderDocumentField);
+
+                    JComboBox<String> comboBox = new JComboBox<>();
+
+                    Set<Product> products = productController.getProductSet();
+                    //int index = 0;
+
+                    for (Product product : products) {
+                        comboBox.addItem(product.getProductName());
+                    }
+
+                    panel.add(new JLabel("Product List:"));
+                    panel.add(comboBox);
+
+                    JTextField amountField = new JTextField();
+                    panel.add(new JLabel("Amount:"));
+                    panel.add(amountField);
+
+                    // Add buttons to submit or cancel the form
+                    JButton submitButton = new JButton("Submit");
+                    JButton cancelButton = new JButton("Cancel");
+                    cancelButton.setForeground(Color.RED); // Set cancel button text color to red
+                    panel.add(submitButton);
+                    panel.add(cancelButton);
+
+                    // Define the action to be performed when the submit button is clicked
+                    submitButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // Get the user input
+                            String orderDocumentIdText = orderDocumentField.getText();
+                            String selectedValue = (String) comboBox.getSelectedItem();
+                            String amountText = amountField.getText();
+
+                            // Validate the order document ID
+                            int orderDocumentId;
+                            try {
+                                orderDocumentId = Integer.parseInt(orderDocumentIdText);
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(frame, "Invalid Order Document ID. Please enter an integer.");
+                                return;
+                            }
+
+                            // Check if the order document exists
+                            OrderDocument orderDocument = orderDocumentControllerImplGui.findOrderDocById(orderDocumentId);
+                            if (orderDocument == null) {
+                                JOptionPane.showMessageDialog(frame, "Order Document does not exist.");
+                                return;
+                            }
+
+                            // Validate the product
+                            Product selectedProduct = productController.findProductByName(selectedValue);
+
+                            if (selectedProduct == null || !orderDocument.getProductsList().containsKey(selectedProduct)) {
+                                JOptionPane.showMessageDialog(frame, "Selected product is not in the product list of the Order Document.");
+                                return;
+                            }
+
+                            // Validate the amount
+                            double amount;
+                            try {
+                                amount = Double.parseDouble(amountText);
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(frame, "Invalid Amount. Please enter a valid number.");
+                                return;
+                            }
+
+                            orderDocumentControllerImplGui.updateAmountDBD(orderDocumentId,selectedProduct.getProductName(),amount);
+                            // Close the dialog box after processing the input
+                            frame.dispose();
+                        }
+                    });
+
+                    cancelButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // Close the dialog box without processing the input
+                            frame.dispose();
+                        }
+                    });
+
+                    // Set up the dialog box
+                    frame.setSize(300, 200); // Set the desired size of the dialog box
+                    frame.setLocationRelativeTo(frame); // Specify the component relative to which the window should be positioned
+                    frame.setVisible(true);
                 }
             });
+
+
+
 
             removeProductsButton.addActionListener(new ActionListener() {
                 @Override
