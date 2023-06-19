@@ -50,6 +50,7 @@ public class TransitRecord {
             System.out.println(" Truck weight at exit: " + weight);
         });
     }
+
     public void setTransitRecordId(int transitRecordId) {
         this.transitRecordId = transitRecordId;
     }

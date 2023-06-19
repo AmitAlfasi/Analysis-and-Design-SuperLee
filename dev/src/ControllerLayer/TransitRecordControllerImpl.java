@@ -6,7 +6,7 @@ import DomainLayer.TransitRecord;
 import java.util.Set;
 
 public class TransitRecordControllerImpl implements TransitRecordController {
-    private final TransitRecordDAO transitRecordDAO;
+    protected final TransitRecordDAO transitRecordDAO;
 
 
     public TransitRecordControllerImpl(TransitRecordDAO transitRecordDAO) {

@@ -1,6 +1,9 @@
 package GUI_Layer;
 
 import ControllerLayer.ControllerGen;
+import ControllerLayer.OrderDocumentController;
+import ControllerLayer.OrderDocumentControllerImplGui;
+import ControllerLayer.TransitRecordController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +12,15 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 public class PresentationGui extends JFrame {
+    OrderDocumentController orderDocumentControllerGui;
+    TransitRecordController transitRecordControllerGui;
     public PresentationGui() {
+        try {
+            this.orderDocumentControllerGui = ControllerGen.getOrderDocumentControllerGui();
+            this.transitRecordControllerGui = ControllerGen.getTransitRecordControllerGui();
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
         setTitle("Delivery System Menu");
         setSize(400, 300);
         setLayout(new GridLayout(6, 1));
@@ -129,6 +140,8 @@ public class PresentationGui extends JFrame {
 
 
     private void displayDocumentManagerMenu() {
+
+//                OrderDocumentControllerImplGui
         // Set the title of the window to "Manage Documents"
         setTitle("Manage Documents");
 
@@ -153,7 +166,7 @@ public class PresentationGui extends JFrame {
         showPendingOrdersButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Code to handle show pending orders action
+                orderDocumentControllerGui.showPendingOrderDocs();
             }
         });
 
@@ -161,6 +174,7 @@ public class PresentationGui extends JFrame {
         showCompletedOrdersButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                orderDocumentControllerGui.showCompletedOrderDocs();
                 // Code to handle show completed orders action
             }
         });
@@ -169,6 +183,7 @@ public class PresentationGui extends JFrame {
         showTransitRecordsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                transitRecordControllerGui.showTransitRecords();
                 // Code to handle show transit records action
             }
         });
