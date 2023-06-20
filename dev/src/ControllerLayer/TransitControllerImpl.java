@@ -128,7 +128,7 @@ public class TransitControllerImpl implements TransitController {
     public boolean transferLoad(Truck smallTruck, Truck biggerTruck){
         boolean validTransfer = truckController.transferLoadV2(smallTruck, biggerTruck);
         if (validTransfer){
-            System.out.println("Transfer load form truck: " + smallTruck.getPlateNumber() + " to truck: " + biggerTruck.getPlateNumber());
+            //System.out.println("Transfer load form truck: " + smallTruck.getPlateNumber() + " to truck: " + biggerTruck.getPlateNumber());
             return true;
         }
         System.out.println("Chosen truck is too small, please try again.. ");

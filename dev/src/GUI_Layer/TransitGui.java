@@ -1,27 +1,32 @@
 package GUI_Layer;
 
+import BussinesLogic.BranchStore;
 import BussinesLogic.TransitCoordinator;
 import ControllerLayer.OrderDocumentController;
 import ControllerLayer.TransitController;
 import ControllerLayer.TransitRecordController;
 import ControllerLayer.TruckController;
-import DomainLayer.OrderDocument;
-import DomainLayer.Product;
-import DomainLayer.Transit;
+import DomainLayer.*;
 import ExceptionsPackage.UiException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
+import java.util.Set;
+
+import BussinesLogic.Driver;
+import BussinesLogic.License;
 
 class TransitGui extends JFrame {
 
     private final TransitController transitControllerGui;
     private TruckController truckControllerGui;
     private TransitCoordinator transitCoordinator;
-    //private OrderDocumentController orderDocumentControllerGui;
+    private OrderDocumentController orderDocumentControllerGui;
     private TransitRecordController transitRecordControllerGui;
 
     public TransitGui(TransitController transitControllerGui, TruckController truckControllerGui, TransitCoordinator transitCoordinator,
@@ -29,7 +34,7 @@ class TransitGui extends JFrame {
         this.transitControllerGui = transitControllerGui;
         this.truckControllerGui = truckControllerGui;
         this.transitCoordinator  = transitCoordinator;
-        //this.orderDocumentControllerGui = orderDocumentControllerGui;
+        this.orderDocumentControllerGui = orderDocumentControllerGui;
         this.transitRecordControllerGui = transitRecordControllerGui;
 
         setTitle("Update Transit");
@@ -287,9 +292,42 @@ class TransitGui extends JFrame {
         startTransitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Code to handle start transit action
+                // Prompt the user to enter the transit ID
+                UIManager.put("OptionPane.okButtonText", "OK");
+                UIManager.put("OptionPane.cancelButtonText", "<html><font color='red'>Cancel</font></html>");
+                String transitIdInput = JOptionPane.showInputDialog("Enter Transit ID:");
+                if (transitIdInput != null) {
+                    int transitId;
+                    try {
+                        transitId = Integer.parseInt(transitIdInput);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid transit ID.");
+                        return;
+                    }
+
+                    Transit selectedTransit = transitControllerGui.findTransitByID(transitId);
+
+                    if (selectedTransit != null) {
+                        // Verify the transit date is today
+                        LocalDate today = LocalDate.now();
+                        if (!selectedTransit.getTransitDate().isEqual(today)) {
+                            JOptionPane.showMessageDialog(null, "The selected transit is not scheduled for today.");
+                            return;
+                        }
+//                        if (!transitCoordinator.StorageWorkersExist(selectedTransit.getDestinationStores(), selectedTransit.getTransitDate()))
+//                        {
+//                            JOptionPane.showMessageDialog(null, "One or more of branchStore on route does not have storage workers.");
+//                            return;
+//                        }
+                        startTransit(selectedTransit);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Invalid transit ID.");
+                    }
+                }
             }
         });
+
+
 
         ShowStoreAvailabilityButton.addActionListener(new ActionListener() {
             @Override
@@ -497,6 +535,237 @@ class TransitGui extends JFrame {
         } else if (iFlag == 1) {
             JOptionPane.showMessageDialog(null, "Transit's driver updated successfully");
         }
+    }
+
+
+    private void startTransit(Transit transit) {
+        LocalDateTime presentDate = LocalDate.now().atStartOfDay();
+
+        if (!transit.getTransitDate().isEqual(presentDate.toLocalDate())) {
+            JOptionPane.showMessageDialog(null, "Back to transit menu."); // TODO: Update with appropriate message
+            return;
+        }
+
+        JTextArea progressTextArea = new JTextArea();
+        progressTextArea.setEditable(false);
+
+        JFrame progressFrame = new JFrame("Transit Progress");
+        progressFrame.add(progressTextArea);
+        progressFrame.setSize(400, 300);
+        progressFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        progressFrame.setVisible(true);
+
+        appendToProgressTextArea(progressTextArea, "Starting transit...");
+        transit.setDepartureTime(LocalTime.now());
+        appendToProgressTextArea(progressTextArea, "ETA in minutes for the transit: " + transit.getETA());
+
+        TransitRecord transitRecord = transitRecordControllerGui.createTransitRecord(transit);
+
+        for (Supplier supplier : transit.getDestinationSuppliers()) {
+            appendToProgressTextArea(progressTextArea, "Arrived at supplier: " + supplier.getSupplierId());
+
+            for (OrderDocument orderDoc : transit.getOrdersDocs()) {
+                if (supplier.getSupplierId() == orderDoc.getSource().getSupplierId()) {
+                    appendToProgressTextArea(progressTextArea, "Loading order number: " + orderDoc.getOrderDocumentId());
+                    transit.getTruck().loadTruck(orderDoc.getTotalWeight());
+
+                    if (transit.getTruck().getMaxCarryWeight() < transit.getTruck().getCurrentWeight()) {
+                        transitRecord.updateTransitProblem();
+                        appendToProgressTextArea(progressTextArea, "------");
+                        appendToProgressTextArea(progressTextArea, "OverWeight Problem");
+                        overweight(transit, orderDoc);
+                        appendToProgressTextArea(progressTextArea, "OverWeight Solved");
+                        appendToProgressTextArea(progressTextArea, "------");
+                    }
+                }
+            }
+            transitRecord.addSupWeightExit(supplier, transit.getTruck().getCurrentWeight());
+        }
+
+        for (BranchStore branchStore : transit.getDestinationStores()) {
+            appendToProgressTextArea(progressTextArea, "Arrived at branchStore: " + branchStore.getBranchID());
+
+            for (OrderDocument orderDoc : transit.getOrdersDocs()) {
+                if (branchStore.getBranchID() == orderDoc.getDestination().getBranchID()) {
+                    appendToProgressTextArea(progressTextArea, "Unloading order number: " + orderDoc.getOrderDocumentId());
+                    transit.getTruck().unloadTruck(orderDoc.getTotalWeight());
+                    this.orderDocumentControllerGui.moveOrderToFinishDB(orderDoc);
+                }
+            }
+        }
+
+        transitRecordControllerGui.saveTransitRecordDB(transitRecord);
+        appendToProgressTextArea(progressTextArea, "Finished transit.");
+
+        JOptionPane.showMessageDialog(null, "Transit completed.", "Transit Progress", JOptionPane.INFORMATION_MESSAGE);
+        transitControllerGui.moveTransitToFinishedDB(transit);
+        progressFrame.dispose();
+    }
+
+    private void appendToProgressTextArea(JTextArea textArea, String message) {
+        SwingUtilities.invokeLater(() -> {
+            textArea.append(message + "\n");
+            textArea.setCaretPosition(textArea.getDocument().getLength());
+        });
+    }
+
+
+    private void overweight(Transit transit, OrderDocument currentOrder) {
+        String[] options = {"Bring bigger truck", "Remove products from this order", "Delete this order from transit"};
+
+        boolean verifiedFlag = false;
+
+        do {
+            JPanel panel = new JPanel(new GridBagLayout());
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            constraints.gridwidth = 1;
+            constraints.anchor = GridBagConstraints.CENTER;
+            constraints.weightx = 1.0;
+            constraints.weighty = 1.0;
+
+            JLabel messageLabel = new JLabel("----------------Overweight-----------------", SwingConstants.CENTER);
+            messageLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            panel.add(messageLabel, constraints);
+
+            int choice = JOptionPane.showOptionDialog(
+                    null,
+                    panel,
+                    "Overweight",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+            );
+
+            switch (choice) {
+                case 0: // Bring bigger truck
+                    verifiedFlag = bringBiggerTruck(transit);
+                    break;
+                case 1: // Remove products from order
+                    if (currentOrder.getProductsList().size() > 1) {
+                        verifiedFlag = removeProductFromOrder(transit, currentOrder);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Order id: " + currentOrder.getOrderDocumentId() + " contains only one product, removing order");
+                        // Update weight
+                        // double updatedLoadWeight = transit.getTruck().getCurrentWeight() - currentOrder.getTotalWeight();
+                        // transit.getTruck().setCurrentLoadWeight(updatedLoadWeight);
+                        // transit.getOrdersDocs().remove(currentOrder);
+                        // transitControllerGui.updateOrderDocumentOfTransit(transit, currentOrder, "-1");
+                        //verifiedFlag = true;
+                    }
+                    //break;
+                case 2: // Delete order
+                    // Update weight
+                    double updatedLoadWeight = transit.getTruck().getCurrentWeight() - currentOrder.getTotalWeight();
+                    transit.getTruck().setCurrentLoadWeight(updatedLoadWeight);
+                    transit.getOrdersDocs().remove(currentOrder);
+                    transitControllerGui.updateOrderDocumentOfTransit(transit, currentOrder, "-1");
+                    verifiedFlag = true;
+                    break;
+                default:
+                    // Invalid input
+                    break;
+            }
+        } while (!verifiedFlag);
+    }
+
+    private boolean removeProductFromOrder(Transit transit, OrderDocument orderDocument) {
+        double truckCurrentWeight = transit.getTruck().getCurrentWeight();
+        double overWeightAmount = truckCurrentWeight - transit.getTruck().getMaxCarryWeight();
+        double originalOrderWeight = orderDocument.getTotalWeight();
+        JOptionPane.showMessageDialog(null, "Reduce at least: " + overWeightAmount + " kg");
+
+        showOrder(orderDocument);
+
+
+        // Show input dialog for product name
+        String sProductName = JOptionPane.showInputDialog("Enter product name: ");
+        orderDocument = orderDocumentControllerGui.removeProductFromOrderDocDBdP(orderDocument.getOrderDocumentId(), sProductName);
+        double updatedOrderWeight = orderDocument.getTotalWeight();
+        double newCurrentWeight = truckCurrentWeight - (originalOrderWeight - updatedOrderWeight);
+        transit.getTruck().setCurrentLoadWeight(newCurrentWeight);
+
+        return !(newCurrentWeight > transit.getTruck().getMaxCarryWeight());
+    }
+
+
+    private Truck findNewTruck(String plateNumber) {
+        return truckControllerGui.findTruckByPlate(plateNumber);
+    }
+
+    private Driver findNewDriver(LocalDate transitDate, String driverId, Set<License> licenses) {
+        // Show input dialog for driver's id
+        return transitCoordinator.SwitchDriverInTransit(transitDate, driverId, licenses);
+    }
+
+    private boolean bringBiggerTruck(Transit transit) {
+        // TODO: Verify truck and driver availability
+
+        // Show input dialog for truck's plate number
+        String sPlateNumber = JOptionPane.showInputDialog("Enter truck's plate number: ");
+        Truck newTruck = findNewTruck(sPlateNumber);
+
+        if (newTruck == null) {
+            JOptionPane.showMessageDialog(null, "Truck's plate number: " + sPlateNumber + " not found");
+            return false;
+        }
+
+        // Show input dialog for driver's id
+        String newDriverId = JOptionPane.showInputDialog("Enter driver's id: ");
+        Driver newDriver = findNewDriver(transit.getTransitDate(), newDriverId, newTruck.getTruckLicenses());
+
+        if (newDriver == null) {
+            JOptionPane.showMessageDialog(null, "Driver's id: " + newDriverId + " not found");
+            return false;
+        }
+
+        if (!transitControllerGui.isDriverAllowToDriveTruck(newTruck, newDriver)) {
+            JOptionPane.showMessageDialog(null, "Chosen driver: " + newDriver.getId() + " is not qualified to drive the chosen truck");
+            return false;
+        }
+
+        Truck smallTruck = transit.getTruck();
+
+        if (transitControllerGui.transferLoad(smallTruck, newTruck)) {
+            transitControllerGui.replaceTransitDriver(transit.getTransitId(), newDriver.getId(), newTruck.getPlateNumber(), "onTheFly");
+            return true;
+        }
+
+        return false;
+    }
+
+    private void showOrder(OrderDocument orderDocument) {
+        JPanel panel = new JPanel(new BorderLayout());
+        JTextArea textArea = new JTextArea();
+        textArea.setEditable(false);
+
+        StringBuilder message = new StringBuilder();
+        message.append("Order document ID: ").append(orderDocument.getOrderDocumentId()).append("\n");
+        message.append("Source: ").append(orderDocument.getSource().getSupplierId()).append("\n");
+        message.append("Destination: ").append(orderDocument.getDestination().getBranchID()).append("\n");
+        message.append("Total weight: ").append(orderDocument.getTotalWeight()).append("\n\n");
+
+        message.append("Products in this Order:\n");
+        Map<Product, Double> productsList = orderDocument.getProductsList();
+        for (Map.Entry<Product, Double> entry : productsList.entrySet()) {
+            Product product = entry.getKey();
+            Double quantity = entry.getValue();
+            message.append("Product Name: ").append(product.getProductName()).append("\n");
+            message.append("Amount: ").append(quantity).append("\n\n");
+        }
+        message.append("\n");
+
+        textArea.setText(message.toString());
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(500, 400));
+        textArea.setCaretPosition(0);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        JOptionPane.showMessageDialog(null, panel, "Order Document Details", JOptionPane.PLAIN_MESSAGE);
     }
 
 

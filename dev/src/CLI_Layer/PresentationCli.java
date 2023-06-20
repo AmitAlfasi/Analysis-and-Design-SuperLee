@@ -114,7 +114,7 @@ public class PresentationCli {
     public void displayEditOrderMenu(){
         System.out.println("-----Edit Order-----");
         System.out.println("1. Add products to an order ");
-        System.out.println("2. Change the amount of a product ");
+        System.out.println("2. Update product amount ");
         System.out.println("3. Remove products ");
         System.out.println("0. Back to Delivery System Menu ");
     }

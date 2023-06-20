@@ -303,8 +303,6 @@ public class TransitCli {
         Truck smallTuck = transit.getTruck();
         if (transitController.transferLoad(smallTuck, biggerTruck))
         {
-//            transit.setDriver(newDriver);
-//            transit.setTruck(biggerTruck);
             transitController.replaceTransitDriver(transit.getTransitId(), newDriver.getId(), biggerTruck.getPlateNumber(), "onTheFly");
             return true;
         }
