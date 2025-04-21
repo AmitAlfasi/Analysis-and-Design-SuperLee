@@ -1,53 +1,77 @@
-# SuperLee System
+# SuperLee System: Supermarket Logistics Management 🛒
 
-SuperLee is an analysis and design project for a supermarket information system focusing on supply and storage management, specifically the **Transportation** module.
+**Academic Project:** This system was developed as part of the **Software Systems Analysis and Design** course curriculum. It serves as a practical application of analysis and design principles in building information systems.
 
-## Table of Contents
+---
 
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Installation and Setup](#installation-and-setup)
-- [Usage](#usage)
-- [File Descriptions](#file-descriptions)
-  
-## Project Overview
+## 🌟 Project Overview
 
-The SuperLee System aims to support the logistics of a supermarket's supply chain by managing transit, orders, and storage at various branches. This project emphasizes creating and managing order documents, maintaining driver schedules, and setting up store-specific requirements.
+Tired of tangled logistics in supermarket supply chains? **SuperLee** is here to help! This analysis and design project introduces an information system focused on optimizing **supply, storage, and transportation** for supermarkets.
 
-## Features
+SuperLee tackles the complexities of managing deliveries, coordinating transit between suppliers and branches, tracking orders, and ensuring storage requirements are met. The system is specifically designed to streamline the **Transportation module**, handling everything from order document creation to driver scheduling and store-specific logistics needs.
 
-- **Transportation Management**: Manage deliveries, transit coordination, and schedules for various branches.
-- **Order Processing**: Track supplier orders, store destinations, and product weights.
-- **Database Integration**: Uses SQLite to persist data.
-- **CLI and GUI**: Interact with the system through a command-line interface and a basic GUI.
+Whether you're managing a single store or a network of branches, SuperLee provides the tools to keep your shelves stocked and your operations running smoothly.
 
-## Installation and Setup
+## ✨ Features
 
-1. **Clone the Repository**:
+* 🚚 **Robust Transportation Management:** Coordinate deliveries, manage transit routes, and schedule drivers efficiently across multiple branches.
+* 📄 **Streamlined Order Processing:** Create, track, and manage orders from suppliers, including details like destination stores and product weights.
+* 📦 **Branch & Storage Awareness:** Define and manage store-specific requirements, shifts, and employee data related to logistics.
+* 💾 **Persistent Data Storage:** Utilizes **SQLite** for reliable data management, including a provided simulation database (`identifier.sqlite`) for realistic testing.
+* 🖥️ **Dual Interface:** Interact via a straightforward **Command-Line Interface (CLI)** for quick operations or a user-friendly **Graphical User Interface (GUI)** for visual management.
+
+## 🛠️ Installation and Setup
+
+Get SuperLee up and running in a few simple steps:
+
+1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/IttaySegal/Analyze-and-Design-SuperLee.git
+    git clone [https://github.com/IttaySegal/Analyze-and-Design-SuperLee.git](https://github.com/IttaySegal/Analyze-and-Design-SuperLee.git)
     cd Analyze-and-Design-SuperLee
     ```
 
-2. **Dependencies**:
-    - Ensure Java is installed.
-    - Install necessary libraries or set up the project within an IDE (like IntelliJ IDEA) with dependencies managed via the included project files.
+2.  **Prerequisites:**
+    * Ensure you have a compatible **Java Development Kit (JDK)** installed on your system.
+    * No external library installation is typically required if using an IDE like IntelliJ IDEA, as dependencies should be managed via the project files.
 
-3. **Database**:
-    - The system uses `SQLite`. An identifier database (`identifier.sqlite`) is provided to simulate real-time data.
+3.  **IDE Setup (Recommended):**
+    * Import the project into your favorite Java IDE (e.g., IntelliJ IDEA, Eclipse). The IDE should automatically handle project setup and dependencies.
 
-## Usage
+4.  **Database:**
+    * The system relies on SQLite. The `identifier.sqlite` file located in the project root directory is pre-populated to simulate real-time operational data. Ensure this file is accessible by the application.
 
-- **CLI**:
-    - The CLI provides functions to manage orders and logistics through commands found in `dev/src/CLI_Layer/OrderDocumentCli.java`.
-- **GUI**:
-    - Launch the GUI to visually manage orders and interact with the transportation system, accessible in `dev/src/GUI_Layer/OrderDocumentGui.java`.
+## 🚀 Usage
 
-## File Descriptions
+You can interact with the SuperLee system in two ways:
 
-- **`dev/src/BussinesLogic/BranchStore.java`**: Defines `BranchStore` for branch management, including shift and employee data.
-- **`dev/src/ControllerLayer/ControllerGen.java`**: Initializes core controllers (Truck, Transit, Product, etc.) for handling business logic.
-- **`dev/src/CLI_Layer/OrderDocumentCli.java`**: CLI for creating and managing order documents.
-- **`dev/src/GUI_Layer/OrderDocumentGui.java`**: GUI components for order management and supplier handling.
-- **`dev/src/DomainLayer/OrderDocument.java`**: Represents orders with supplier and destination info, and methods for handling product quantities.
-- **`release/adss2023_v02.jar`**: Packaged JAR for the compiled project.
+* **Command-Line Interface (CLI):**
+    * For terminal enthusiasts! Access functions to manage orders and logistics.
+    * The main entry point for CLI operations can be explored in: `dev/src/CLI_Layer/OrderDocumentCli.java`.
+    * Compile and run this class to start the CLI.
+
+* **Graphical User Interface (GUI):**
+    * Prefer a visual approach? Launch the GUI to manage orders, suppliers, and transportation details intuitively.
+    * The main entry point for the GUI is: `dev/src/GUI_Layer/OrderDocumentGui.java`.
+    * Compile and run this class to launch the GUI application.
+
+## 📁 Code Structure & Key Files
+
+The project follows a layered architecture to separate concerns:
+
+* **Presentation Layer (CLI/GUI):** Handles user interaction.
+    * `dev/src/CLI_Layer/OrderDocumentCli.java`: Implements the command-line interface.
+    * `dev/src/GUI_Layer/OrderDocumentGui.java`: Implements the graphical user interface.
+* **Controller Layer:** Acts as a bridge between the UI and the business logic.
+    * `dev/src/ControllerLayer/ControllerGen.java`: Initializes and manages core controllers (Truck, Transit, Product, etc.).
+* **Business Logic Layer:** Contains the core rules and processes.
+    * `dev/src/BussinesLogic/BranchStore.java`: Manages branch-specific data like shifts and employee logistics roles.
+* **Domain Layer:** Represents the core entities of the system.
+    * `dev/src/DomainLayer/OrderDocument.java`: Defines the structure and behavior of order documents, including supplier/destination info and product handling.
+* **Data Layer:** (Implicitly managed via Controllers/SQLite) Handles data persistence.
+
+* **Pre-compiled Application:**
+    * `release/adss2023_v02.jar`: A packaged JAR file containing the compiled project for easy execution (may require specific runtime environment setup).
+
+---
+
+Feel free to explore the code and understand how different components interact to manage supermarket logistics!
